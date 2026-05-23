@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environment & Secrets — NEVER PUSH
+.env
+.env.*
+*.env
+config/.env
+config/.env.*
+!.env.example
+!.env.example.*
+.venv/
+venv/
+
+# Output
+output/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vault protection — extra safety
+**/secrets/
+**/credentials/
+**/vault/
+**/*token*
+**/*secret*
+**/*credential*
