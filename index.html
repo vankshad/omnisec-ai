@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniSec AI — Autonomous Security Testing</title>
+    <meta name="description" content="AI-powered penetration testing automation using multi-model orchestration">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0a0a0f;
+            --card: #12121a;
+            --border: #1e1e2e;
+            --accent: #6c5ce7;
+            --accent2: #00cec9;
+            --text: #e0e0e0;
+            --muted: #888;
+            --green: #00b894;
+            --red: #ff6b6b;
+            --yellow: #ffeaa7;
+            --blue: #74b9ff;
+        }
+
+        body {
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(108,92,231,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(0,206,201,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a4bd4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108,92,231,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent2);
+            border: 1px solid var(--accent2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0,206,201,0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Stats Bar */
+        .stats {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            padding: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent2);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .section-sub {
+            color: var(--muted);
+            margin-bottom: 3rem;
+        }
+
+        /* Architecture */
+        .arch-diagram {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: var(--accent2);
+        }
+
+        /* Pipeline */
+        .pipeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .phase {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .phase:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        .phase-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .phase-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .phase-desc {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* Models */
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .model-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .model-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .model-role {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .model-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .badge-primary { background: rgba(108,92,231,0.2); color: var(--accent); }
+        .badge-secondary { background: rgba(0,206,201,0.2); color: var(--accent2); }
+
+        /* Code Demo */
+        .code-demo {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: var(--border);
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f57; }
+        .dot-yellow { background: #febc2e; }
+        .dot-green { background: #28c840; }
+
+        .code-body {
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .code-body code {
+            color: var(--text);
+        }
+
+        .code-comment { color: #6a737d; }
+        .code-keyword { color: var(--accent); }
+        .code-string { color: var(--green); }
+        .code-func { color: var(--accent2); }
+
+        /* Terminal Demo */
+        .terminal {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .terminal-bar {
+            background: #161b22;
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .terminal-body {
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--green);
+        }
+
+        .terminal-body .prompt { color: var(--accent); }
+        .terminal-body .output { color: var(--text); }
+        .terminal-body .success { color: var(--green); }
+        .terminal-body .warning { color: var(--yellow); }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .feature-icon { font-size: 1.5rem; margin-bottom: 0.8rem; }
+        .feature-title { font-weight: 600; margin-bottom: 0.4rem; }
+        .feature-desc { font-size: 0.85rem; color: var(--muted); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent2);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo { font-size: 2.5rem; }
+            .stats { gap: 1.5rem; }
+            .stat-value { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <div class="logo">OmniSec AI</div>
+    <p class="tagline">Autonomous Security Testing Framework</p>
+    <p style="color: var(--muted); max-width: 600px; margin-bottom: 2rem; font-size: 0.9rem;">
+        AI-powered penetration testing automation using multi-model orchestration.<br>
+        Claude + GPT-4 + MiMo V2.5 + Gemini — each model handles what it does best.
+    </p>
+    <div class="hero-buttons">
+        <a href="https://github.com/vankshad/omnisec-ai" class="btn btn-primary" target="_blank">⭐ GitHub</a>
+        <a href="#architecture" class="btn btn-secondary">Architecture →</a>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+    <div class="stat">
+        <div class="stat-value">4</div>
+        <div class="stat-label">AI Models</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Pipeline Phases</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Task Types</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">19</div>
+        <div class="stat-label">Source Files</div>
+    </div>
+</div>
+
+<!-- Architecture -->
+<section id="architecture">
+    <h2 class="section-title">🏗️ Architecture</h2>
+    <p class="section-sub">Multi-model AI orchestration for security testing</p>
+    
+    <div class="arch-diagram">
+┌─────────────────────────────────────────────────────────────┐
+│                        OmniSec AI                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   ┌───────────┐    ┌───────────┐    ┌───────────┐          │
+│   │  📡 Recon │───→│ 🔍 Vuln   │───→│ 📊 Report │          │
+│   │  Module   │    │  Scanner  │    │ Generator │          │
+│   └───────────┘    └───────────┘    └───────────┘          │
+│        │                │                │                  │
+│        └────────────────┼────────────────┘                  │
+│                         ▼                                   │
+│   ┌─────────────────────────────────────────────┐          │
+│   │          🧠 AI Model Orchestrator            │          │
+│   │                                               │          │
+│   │   ┌─────────┐  ┌─────────┐  ┌─────────┐     │          │
+│   │   │  Claude  │  │  GPT-4  │  │  MiMo   │     │          │
+│   │   │  Sonnet  │  │   Omni  │  │  V2.5   │     │          │
+│   │   └─────────┘  └─────────┘  └─────────┘     │          │
+│   │                                               │          │
+│   │   Task Router: Each model handles its         │          │
+│   │   strongest task type automatically           │          │
+│   └─────────────────────────────────────────────┘          │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</div>
+</section>
+
+<!-- Pipeline -->
+<section>
+    <h2 class="section-title">🔄 Pipeline</h2>
+    <p class="section-sub">3-phase automated security testing</p>
+    
+    <div class="pipeline">
+        <div class="phase">
+            <div class="phase-icon">📡</div>
+            <div class="phase-title">Phase 1: Recon</div>
+            <div class="phase-desc">
+                Subdomain enumeration, live host detection, port scanning, tech stack fingerprinting.
+                AI analyzes results and prioritizes targets.
+            </div>
+        </div>
+        <div class="phase">
+            <div class="phase-icon">🔍</div>
+            <div class="phase-title">Phase 2: Vuln Scan</div>
+            <div class="phase-desc">
+                Nuclei vulnerability scanning with AI-powered false positive reduction.
+                CVSS scoring and remediation suggestions.
+            </div>
+        </div>
+        <div class="phase">
+            <div class="phase-icon">📊</div>
+            <div class="phase-title">Phase 3: Report</div>
+            <div class="phase-desc">
+                AI-generated professional pentest reports with executive summary,
+                detailed findings, and prioritized recommendations.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI Models -->
+<section>
+    <h2 class="section-title">🧠 AI Models</h2>
+    <p class="section-sub">Each model handles what it does best</p>
+    
+    <div class="models-grid">
+        <div class="model-card">
+            <div class="model-name">Claude Sonnet</div>
+            <div class="model-role">Code Analysis & Exploit Dev</div>
+            <span class="model-badge badge-primary">PRIMARY</span>
+        </div>
+        <div class="model-card">
+            <div class="model-name">GPT-4o</div>
+            <div class="model-role">Recon Interpretation</div>
+            <span class="model-badge badge-secondary">SECONDARY</span>
+        </div>
+        <div class="model-card">
+            <div class="model-name">MiMo V2.5</div>
+            <div class="model-role">Reasoning & Vuln Analysis</div>
+            <span class="model-badge badge-primary">PRIMARY</span>
+        </div>
+        <div class="model-card">
+            <div class="model-name">Gemini Pro</div>
+            <div class="model-role">Image/Document Analysis</div>
+            <span class="model-badge badge-secondary">SUPPORT</span>
+        </div>
+    </div>
+</section>
+
+<!-- Code Demo -->
+<section>
+    <h2 class="section-title">💻 Quick Start</h2>
+    <p class="section-sub">Get started in 3 commands</p>
+    
+    <div class="code-demo">
+        <div class="code-header">
+            <span class="code-dot dot-red"></span>
+            <span class="code-dot dot-yellow"></span>
+            <span class="code-dot dot-green"></span>
+            <span style="color: var(--muted); margin-left: 0.5rem;">terminal</span>
+        </div>
+        <div class="code-body">
+<pre><code><span class="code-comment"># Install</span>
+<span class="code-prompt">$</span> pip install -r requirements.txt
+
+<span class="code-comment"># Configure</span>
+<span class="code-prompt">$</span> cp config/example.env config/.env
+<span class="code-prompt">$</span> <span class="code-comment"># Edit .env with your API keys</span>
+
+<span class="code-comment"># Run full scan</span>
+<span class="code-prompt">$</span> python -m omnisec --target example.com --mode full</code></pre>
+        </div>
+    </div>
+
+    <div class="terminal">
+        <div class="terminal-bar">
+            <span class="code-dot dot-red" style="width:8px;height:8px;"></span>
+            <span class="code-dot dot-yellow" style="width:8px;height:8px;"></span>
+            <span class="code-dot dot-green" style="width:8px;height:8px;"></span>
+            <span>omnisec — scan output</span>
+        </div>
+        <div class="terminal-body">
+<pre><span class="prompt">==================================================</span>
+<span class="prompt">  OmniSec AI — Autonomous Security Testing</span>
+<span class="prompt">==================================================</span>
+
+<span class="output">12:34:56 │ INFO    │ Initialized 2 AI providers: mimo, claude</span>
+<span class="output">12:34:57 │ INFO    │ Phase 1: Reconnaissance</span>
+<span class="output">12:35:02 │ INFO    │ Found 47 subdomains for example.com</span>
+<span class="output">12:35:08 │ INFO    │ Phase 2: Vulnerability Analysis</span>
+<span class="warning">12:35:15 │ WARNING │ nuclei not installed, using AI analysis</span>
+<span class="output">12:35:22 │ INFO    │ Phase 3: Report Generation</span>
+<span class="success">12:35:30 │ INFO    │ Scan complete: 12 findings</span>
+
+<span class="prompt">==================================================</span>
+<span class="success">  SCAN COMPLETE</span>
+<span class="output">  Target: https://example.com</span>
+<span class="output">  Findings: 12</span>
+<span class="output">  Report: ./output/report_20260523_123530.md</span>
+<span class="output">  AI Tokens Used: 15,420</span>
+<span class="prompt">==================================================</span></pre>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section>
+    <h2 class="section-title">✨ Features</h2>
+    <p class="section-sub">Built for real-world security testing</p>
+    
+    <div class="features-grid">
+        <div class="feature">
+            <div class="feature-icon">🔄</div>
+            <div class="feature-title">Multi-Model Orchestration</div>
+            <div class="feature-desc">Automatically routes tasks to the optimal AI model based on task type and model strengths.</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🔍</div>
+            <div class="feature-title">AI False Positive Reduction</div>
+            <div class="feature-desc">AI analyzes scan results to filter out false positives and validate real vulnerabilities.</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Professional Reports</div>
+            <div class="feature-desc">Auto-generated pentest reports with executive summary, CVSS scores, and remediation steps.</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-title">Target Prioritization</div>
+            <div class="feature-desc">AI ranks targets by attack surface value — admin panels, APIs, and dev environments first.</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🔌</div>
+            <div class="feature-title">Tool Integration</div>
+            <div class="feature-desc">Works with subfinder, httpx, nuclei, nmap. Graceful fallback when tools aren't installed.</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🛡️</div>
+            <div class="feature-title">Opsec Built-In</div>
+            <div class="feature-desc">Credential vault, clean history, no leak patterns. Security-first development.</div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>Built with ❤️ using <strong>Claude Code</strong>, <strong>Hermes Agent</strong>, and <strong>Xiaomi MiMo</strong></p>
+    <p style="margin-top: 0.5rem;">
+        <a href="https://github.com/vankshad/omnisec-ai" target="_blank">GitHub</a> · 
+        <a href="https://github.com/vankshad/omnisec-ai/blob/main/docs/architecture.md" target="_blank">Docs</a> · 
+        <a href="https://github.com/vankshad/omnisec-ai/blob/main/LICENSE" target="_blank">MIT License</a>
+    </p>
+    <p style="margin-top: 1rem; font-size: 0.75rem; color: #555;">© 2026 OmniSec AI</p>
+</footer>
+
+</body>
+</html>
